@@ -30,6 +30,23 @@ A web application that helps you randomly pick a restaurant from your saved list
 
 The application will be available at `http://localhost:5000`. Use the "Restaurant List" link at top right to manage the entries.
 
+> **Note on persistence:**
+> The database file is stored in `instance/lunch_roulette.db` inside the container. Docker Compose mounts this path to a named volume (`lunch_roulette_db`), so your data survives container rebuilds. If you previously added restaurants with an earlier version, they may have been stored in a different file (`lunch_roulette.db` at the project root) which was lost when the container was recreated. To recover them, see the section below.
+
+## Migrating existing data
+
+If you still have the old database (inside a container or wherever it was created) you can copy it to the new location before starting the stack:
+
+```bash
+# from the host, locate the volume data dir
+# e.g. /var/snap/docker/common/var-lib-docker/volumes/lunch_roulette_db/_data
+# then copy the previous database into that directory and rename it:
+cp /path/to/old/lunch_roulette.db /var/snap/docker/common/var-lib-docker/volumes/lunch_roulette_db/_data/lunch_roulette.db
+```
+
+After that `./start.sh` will use the migrated data.  
+
+
 ### Manual Setup (without Docker)
 
 1. Create a virtual environment:
