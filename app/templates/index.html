@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lunch Roulette</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Lunch Roulette</h1>
+        
+        <div class="main-content">
+            <!-- Left Panel: Controls and Result -->
+            <div class="left-panel">
+                <div class="input-section">
+                    <input type="text" id="restaurantInput" placeholder="Enter restaurant name" />
+                    <input type="text" id="categoryInput" placeholder="Category (optional)" />
+                    <button id="addBtn" class="btn-add">Add</button>
+                </div>
+                
+                <div class="categories-section">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="selectAllCheckbox" />
+                        <span>Select All</span>
+                    </label>
+                    <div id="categoriesContainer"></div>
+                </div>
+                
+                <button id="goBtn" class="btn-go">Go!</button>
+                
+                <div id="resultContainer" class="result">
+                    <!-- Result will appear here -->
+                </div>
+            </div>
+            
+            <!-- Right Panel: Restaurant List -->
+            <div class="right-panel">
+                <h2>Restaurants</h2>
+                <ul id="restaurantsList"></ul>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

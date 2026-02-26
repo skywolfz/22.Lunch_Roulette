@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: lunch_roulette_web
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_ENV: development
+      FLASK_APP: run.py
+    volumes:
+      - .:/app
+      - lunch_roulette_db:/app/instance
+    command: python run.py
+    networks:
+      - lunch_roulette_network
+
+networks:
+  lunch_roulette_network:
+    driver: bridge
+
+volumes:
+  lunch_roulette_db:
