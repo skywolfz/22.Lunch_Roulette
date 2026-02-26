@@ -13,3 +13,4 @@ class DevelopmentConfig(Config):
 class ProductionConfig(Config):
     """Production config"""
     DEBUG = False
+    #test
