@@ -1,4 +1,8 @@
+import os
 from app import create_app
+
+# Ensure instance directory exists
+os.makedirs('instance', exist_ok=True)
 
 app = create_app()
 
