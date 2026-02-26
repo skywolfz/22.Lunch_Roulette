@@ -14,10 +14,13 @@ class Restaurant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+    note = db.Column(db.Text, nullable=True)  # optional note / hyperlink
     
     def to_dict(self):
         return {
             'id': self.id,
             'name': self.name,
-            'category': self.category.name if self.category else 'unknown'
+            'category': self.category.name if self.category else 'unknown',
+            'category_id': self.category_id,
+            'note': self.note
         }

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant List - Lunch Roulette</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header-row">
+            <h1 class="title">Restaurant List</h1>
+            <a href="/" class="admin-link">Back</a>
+        </div>
+        <div class="subtitle">SDUSD Network & Services</div>
+        
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="input-section">
+                    <input type="text" id="restaurantInput" placeholder="Enter restaurant name" />
+                    <input type="text" id="categoryInput" placeholder="Category (optional)" />
+                    <input type="text" id="noteInput" placeholder="Note / hyperlink (optional)" />
+                    <button id="addBtn" class="btn-add">Add</button>
+                </div>
+                
+                <h2>Existing Restaurants</h2>
+                <ul id="restaurantsList"></ul>
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='admin.js') }}"></script>
+</body>
+</html>

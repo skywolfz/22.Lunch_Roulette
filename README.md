@@ -21,10 +21,14 @@ A web application that helps you randomly pick a restaurant from your saved list
 ### Running with Docker Compose
 
 ```bash
-docker-compose up
+# start the stack (build automatically if needed)
+./start.sh
+
+# stop the stack
+./start.sh down
 ```
 
-The application will be available at `http://localhost:5000`
+The application will be available at `http://localhost:5000`. Use the "Restaurant List" link at top right to manage the entries.
 
 ### Manual Setup (without Docker)
 
@@ -69,10 +73,8 @@ Visit `http://localhost:5000` in your browser.
 
 ## How to Use
 
-1. **Add a Restaurant**: Enter the restaurant name in the input field, optionally add a category, and click "Add"
-2. **Select Categories**: Check the categories you want to include in the random selection
-3. **Spin**: Click the "Go!" button to get a random restaurant from the selected categories
-4. **Delete**: Click "Delete" on any restaurant to remove it
+- **View Random Restaurant**: On the main page choose categories (or leave none for all) and press the "Go!" button. A spinning animation will display before the final result.
+- **Manage Restaurants**: Click the "Restaurant List" link in the top‑right to go to the admin page. There you can add, edit notes (including hyperlinks), and delete entries. No login is required.
 
 ## Technologies Used
 

@@ -6,10 +6,38 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #4a90e2 0%, #357ab8 100%);
     min-height: 100vh;
     padding: 20px;
 }
+
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-link {
+    color: white;
+    background-color: #2a62a0;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.admin-link:hover {
+    background-color: #224f88;
+}
+
+.subtitle {
+    text-align: center;
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 20px;
+}
+
 
 .container {
     max-width: 1200px;
@@ -49,11 +77,12 @@ body {
 
 input[type="text"] {
     padding: 12px;
-    border: 2px solid #ddd;
+    border: 2px solid #bbb;
     border-radius: 8px;
     font-size: 1rem;
     transition: border-color 0.3s;
 }
+
 
 input[type="text"]:focus {
     outline: none;
@@ -62,7 +91,7 @@ input[type="text"]:focus {
 
 .btn-add {
     padding: 12px 24px;
-    background-color: #667eea;
+    background-color: #357ab8;
     color: white;
     border: none;
     border-radius: 8px;
@@ -73,11 +102,11 @@ input[type="text"]:focus {
 }
 
 .btn-add:hover {
-    background-color: #5568d3;
+    background-color: #2a5d99;
 }
 
 .categories-section {
-    border: 2px solid #eee;
+    border: 2px solid #357ab8;
     padding: 15px;
     border-radius: 8px;
     max-height: 200px;
@@ -113,7 +142,7 @@ input[type="text"]:focus {
 
 .btn-go {
     padding: 20px;
-    background-color: #48bb78;
+    background-color: #2a62a0;
     color: white;
     border: none;
     border-radius: 8px;
@@ -125,7 +154,7 @@ input[type="text"]:focus {
 }
 
 .btn-go:hover {
-    background-color: #38a169;
+    background-color: #224f88;
 }
 
 .btn-go:active {
@@ -133,8 +162,8 @@ input[type="text"]:focus {
 }
 
 .result {
-    background-color: #f7fafc;
-    border-left: 5px solid #48bb78;
+    background-color: #f0f4ff;
+    border-left: 5px solid #2a62a0;
     padding: 20px;
     border-radius: 8px;
     min-height: 100px;
@@ -143,7 +172,7 @@ input[type="text"]:focus {
     justify-content: center;
     font-size: 1.8rem;
     font-weight: bold;
-    color: #2d3748;
+    color: #1a236a;
     text-align: center;
     word-wrap: break-word;
 }
@@ -176,11 +205,16 @@ input[type="text"]:focus {
     padding: 12px 15px;
     margin-bottom: 10px;
     border-radius: 6px;
-    border-left: 4px solid #667eea;
+    border-left: 4px solid #357ab8;
     display: flex;
     justify-content: space-between;
     align-items: center;
     transition: background-color 0.2s;
+}
+
+.restaurant-note a {
+    color: #2a62a0;
+    text-decoration: underline;
 }
 
 .restaurant-item:hover {

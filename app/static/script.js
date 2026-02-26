@@ -1,7 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const restaurantInput = document.getElementById('restaurantInput');
-    const categoryInput = document.getElementById('categoryInput');
-    const addBtn = document.getElementById('addBtn');
     const goBtn = document.getElementById('goBtn');
     const restaurantsList = document.getElementById('restaurantsList');
     const categoriesContainer = document.getElementById('categoriesContainer');
@@ -10,23 +7,16 @@ document.addEventListener('DOMContentLoaded', function() {
     
     let allCategories = [];
     let categoryCheckboxes = {};
+    let latestRestaurants = [];
     
     // Load initial data
     loadCategories();
     loadRestaurants();
     
     // Event listeners
-    addBtn.addEventListener('click', addRestaurant);
     goBtn.addEventListener('click', spinRoulette);
     selectAllCheckbox.addEventListener('change', toggleSelectAll);
-    
-    restaurantInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') addRestaurant();
-    });
-    
-    categoryInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') addRestaurant();
-    });
+
     
     async function loadCategories() {
         try {
@@ -77,40 +67,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    async function addRestaurant() {
-        const name = restaurantInput.value.trim();
-        const category = categoryInput.value.trim();
-        
-        if (!name) {
-            alert('Please enter a restaurant name');
-            return;
-        }
-        
-        try {
-            const response = await fetch('/api/restaurants', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    name: name,
-                    category: category || 'unknown'
-                })
-            });
-            
-            if (response.ok) {
-                restaurantInput.value = '';
-                categoryInput.value = '';
-                restaurantInput.focus();
-                loadCategories();
-                loadRestaurants();
-            } else {
-                alert('Error adding restaurant');
-            }
-        } catch (error) {
-            console.error('Error adding restaurant:', error);
-        }
-    }
     
     async function loadRestaurants() {
         try {
@@ -123,6 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function renderRestaurants(restaurants) {
+        latestRestaurants = restaurants; // keep copy for animation
         restaurantsList.innerHTML = '';
         
         if (restaurants.length === 0) {
@@ -151,43 +108,18 @@ document.addEventListener('DOMContentLoaded', function() {
             info.appendChild(name);
             info.appendChild(catSpan);
             
-            const deleteBtn = document.createElement('button');
-            deleteBtn.className = 'restaurant-delete';
-            deleteBtn.textContent = 'Delete';
-            deleteBtn.addEventListener('click', () => deleteRestaurant(restaurant.id));
-            
             li.appendChild(info);
-            li.appendChild(deleteBtn);
             restaurantsList.appendChild(li);
         });
     }
     
-    async function deleteRestaurant(restaurantId) {
-        if (!confirm('Delete this restaurant?')) return;
-        
-        try {
-            const response = await fetch(`/api/restaurants/${restaurantId}`, {
-                method: 'DELETE'
-            });
-            
-            if (response.ok) {
-                loadRestaurants();
-            }
-        } catch (error) {
-            console.error('Error deleting restaurant:', error);
-        }
-    }
     
     async function spinRoulette() {
         const selectedCategoryIds = Object.entries(categoryCheckboxes)
             .filter(([, checkbox]) => checkbox.checked)
             .map(([categoryId]) => parseInt(categoryId));
         
-        if (selectedCategoryIds.length === 0) {
-            alert('Please select at least one category');
-            return;
-        }
-        
+        // request result (server handles empty selection as all)
         try {
             const response = await fetch('/api/spin', {
                 method: 'POST',
@@ -201,8 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (response.ok) {
                 const result = await response.json();
-                resultContainer.innerHTML = result.name;
-                resultContainer.classList.remove('empty');
+                playAnimation(result.name, selectedCategoryIds);
             } else {
                 const error = await response.json();
                 resultContainer.innerHTML = error.error || 'Error getting result';
@@ -213,5 +144,29 @@ document.addEventListener('DOMContentLoaded', function() {
             resultContainer.innerHTML = 'Error getting result';
             resultContainer.classList.add('empty');
         }
+    }
+
+    function playAnimation(winner, selectedCategoryIds) {
+        const names = latestRestaurants
+            .filter(r => {
+                if (!selectedCategoryIds || selectedCategoryIds.length === 0) return true;
+                return selectedCategoryIds.includes(r.category_id);
+            })
+            .map(r => r.name);
+        if (names.length === 0) names.push(winner);
+        let idx = 0;
+        let delay = 50;
+        resultContainer.classList.remove('empty');
+        const step = () => {
+            if (delay > 500) {
+                resultContainer.innerHTML = winner;
+                return;
+            }
+            resultContainer.innerHTML = names[idx % names.length];
+            idx++;
+            delay *= 1.08; // slow down gradually
+            setTimeout(step, delay);
+        };
+        step();
     }
 });

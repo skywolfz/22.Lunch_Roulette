@@ -9,6 +9,11 @@ main_bp = Blueprint('main', __name__)
 def index():
     return render_template('index.html')
 
+@main_bp.route('/admin')
+def admin():
+    """Restaurant administration page"""
+    return render_template('admin.html')
+
 @main_bp.route('/api/categories', methods=['GET'])
 def get_categories():
     """Get all categories"""
@@ -27,6 +32,7 @@ def add_restaurant():
     data = request.json
     name = data.get('name', '').strip()
     category_name = data.get('category', '').strip() or 'unknown'
+    note = data.get('note', '').strip() or None
     
     if not name:
         return jsonify({'error': 'Restaurant name is required'}), 400
@@ -39,7 +45,7 @@ def add_restaurant():
         db.session.flush()
     
     # Add restaurant
-    restaurant = Restaurant(name=name, category_id=category.id)
+    restaurant = Restaurant(name=name, category_id=category.id, note=note)
     db.session.add(restaurant)
     db.session.commit()
     
@@ -50,14 +56,14 @@ def spin():
     """Get a random restaurant from selected categories"""
     data = request.json
     selected_category_ids = data.get('category_ids', [])
-    
+
+    # if no categories explicitly selected, treat as all
     if not selected_category_ids:
-        return jsonify({'error': 'No categories selected'}), 400
-    
-    # Get restaurants from selected categories
-    restaurants = Restaurant.query.filter(
-        Restaurant.category_id.in_(selected_category_ids)
-    ).all()
+        restaurants = Restaurant.query.all()
+    else:
+        restaurants = Restaurant.query.filter(
+            Restaurant.category_id.in_(selected_category_ids)
+        ).all()
     
     if not restaurants:
         return jsonify({'error': 'No restaurants in selected categories'}), 404
