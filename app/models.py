@@ -15,6 +15,10 @@ class Restaurant(db.Model):
     name = db.Column(db.String(150), nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
     note = db.Column(db.Text, nullable=True)  # optional note / hyperlink
+
+    # tracking stats
+    view_count = db.Column(db.Integer, nullable=False, default=0)
+    spin_count = db.Column(db.Integer, nullable=False, default=0)
     
     def to_dict(self):
         return {
@@ -22,5 +26,7 @@ class Restaurant(db.Model):
             'name': self.name,
             'category': self.category.name if self.category else 'unknown',
             'category_id': self.category_id,
-            'note': self.note
+            'note': self.note,
+            'view_count': self.view_count,
+            'spin_count': self.spin_count
         }

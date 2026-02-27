@@ -53,7 +53,7 @@ def add_restaurant():
 
 @main_bp.route('/api/spin', methods=['POST'])
 def spin():
-    """Get a random restaurant from selected categories"""
+    """Get a random restaurant from selected categories and bump its spin_count"""
     data = request.json
     selected_category_ids = data.get('category_ids', [])
 
@@ -69,6 +69,9 @@ def spin():
         return jsonify({'error': 'No restaurants in selected categories'}), 404
     
     chosen = random.choice(restaurants)
+    # increment spin counter
+    chosen.spin_count = (chosen.spin_count or 0) + 1
+    db.session.commit()
     return jsonify(chosen.to_dict()), 200
 
 @main_bp.route('/api/restaurants/<int:restaurant_id>', methods=['DELETE'])
@@ -94,6 +97,20 @@ def delete_all_restaurants():
     db.session.commit()
     return jsonify({'deleted': num}), 200
 
+@main_bp.route('/api/categories', methods=['DELETE'])
+def delete_categories():
+    """Delete multiple categories at once"""
+    data = request.json or {}
+    ids = data.get('category_ids', [])
+    if not ids:
+        return jsonify({'error': 'No category ids provided'}), 400
+    cats = Category.query.filter(Category.id.in_(ids)).all()
+    count = len(cats)
+    for cat in cats:
+        db.session.delete(cat)
+    db.session.commit()
+    return jsonify({'deleted': count}), 200
+
 @main_bp.route('/api/restaurants/<int:restaurant_id>', methods=['PUT'])
 def update_restaurant(restaurant_id):
     """Edit an existing restaurant"""
@@ -117,6 +134,29 @@ def update_restaurant(restaurant_id):
     restaurant.note = note
     db.session.commit()
     return jsonify(restaurant.to_dict()), 200
+
+
+# statistics endpoint
+@main_bp.route('/api/stats', methods=['GET'])
+def get_stats():
+    total_restaurants = Restaurant.query.count()
+    total_spins = db.session.query(db.func.sum(Restaurant.spin_count)).scalar() or 0
+    total_views = db.session.query(db.func.sum(Restaurant.view_count)).scalar() or 0
+    return jsonify({
+        'restaurants': total_restaurants,
+        'spins': total_spins,
+        'views': total_views
+    })
+
+
+@main_bp.route('/api/restaurants/<int:restaurant_id>/view', methods=['POST'])
+def view_restaurant(restaurant_id):
+    restaurant = Restaurant.query.get(restaurant_id)
+    if not restaurant:
+        return jsonify({'error': 'Restaurant not found'}), 404
+    restaurant.view_count = (restaurant.view_count or 0) + 1
+    db.session.commit()
+    return jsonify({'success': True}), 200
 
 @main_bp.route('/api/export', methods=['GET'])
 def export_data():

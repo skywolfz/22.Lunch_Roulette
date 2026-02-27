@@ -43,13 +43,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const opt = document.createElement('option');
                 opt.value = c.name;
                 datalist.appendChild(opt);
-            });
-        } catch (err) {
+            });            populateCategoryManager(cats);        } catch (err) {
             console.error('Error loading categories for datalist', err);
         }
     }
 
-    // populate datalist before first use
+    // populate datalist and manager before first use
     loadCategories();
 
     function renderRestaurants(restaurants) {
@@ -72,6 +71,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const name = document.createElement('div');
             name.className = 'restaurant-name';
             name.textContent = restaurant.name;
+            // show stats
+            const stats = document.createElement('div');
+            stats.className = 'restaurant-stats';
+            stats.textContent = `(views: ${restaurant.view_count||0}, spins: ${restaurant.spin_count||0})`;
+            info.appendChild(stats);
 
             const catSpan = document.createElement('div');
             catSpan.className = 'restaurant-category';
@@ -200,6 +204,43 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         reader.readAsText(file);
     }
+
+    function populateCategoryManager(cats) {
+        const container = document.getElementById('categoriesManager');
+        container.innerHTML = '';
+        cats.forEach(c => {
+            const label = document.createElement('label');
+            label.className = 'checkbox-container';
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.dataset.categoryId = c.id;
+            const span = document.createElement('span');
+            span.textContent = c.name;
+            label.appendChild(checkbox);
+            label.appendChild(span);
+            container.appendChild(label);
+        });
+    }
+
+    document.getElementById('deleteCategoriesBtn').addEventListener('click', async () => {
+        const checks = Array.from(document.querySelectorAll('#categoriesManager input[type=checkbox]'));
+        const ids = checks.filter(c=>c.checked).map(c=>parseInt(c.dataset.categoryId));
+        if (ids.length === 0) return alert('Select categories to delete');
+        if (!confirm('Delete selected categories? All restaurants in them will be removed.')) return;
+        try {
+            const resp = await fetch('/api/categories', {
+                method:'DELETE',
+                headers:{'Content-Type':'application/json'},
+                body: JSON.stringify({category_ids: ids})
+            });
+            if (resp.ok) {
+                loadRestaurants();
+                loadCategories();
+            }
+        } catch (e) {
+            console.error('category delete error', e);
+        }
+    });
 
     function editField(restaurant, field, span) {
         const input = document.createElement('input');

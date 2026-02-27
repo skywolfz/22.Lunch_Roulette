@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load initial data
     loadCategories();
     loadRestaurants();
+    loadStats();
     
     // Event listeners
     goBtn.addEventListener('click', spinRoulette);
@@ -90,25 +91,26 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        restaurants.forEach(restaurant => {
+        // group by category
+        const groups = {};
+        restaurants.forEach(r => {
+            if (!groups[r.category]) groups[r.category] = [];
+            groups[r.category].push(r);
+        });
+        Object.keys(groups).sort().forEach(cat => {
             const li = document.createElement('li');
-            li.className = 'restaurant-item';
-            
-            const info = document.createElement('div');
-            info.className = 'restaurant-info';
-            
-            const name = document.createElement('div');
-            name.className = 'restaurant-name';
-            name.textContent = restaurant.name;
-            
-            const catSpan = document.createElement('div');
-            catSpan.className = 'restaurant-category';
-            catSpan.textContent = `Category: ${restaurant.category}`;
-            
-            info.appendChild(name);
-            info.appendChild(catSpan);
-            
-            li.appendChild(info);
+            const title = document.createElement('strong');
+            title.textContent = cat;
+            li.appendChild(title);
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'rest-group';
+            groups[cat].slice(0,4).forEach(r => {
+                const span = document.createElement('span');
+                span.className = 'rest-item';
+                span.textContent = r.name;
+                groupDiv.appendChild(span);
+            });
+            li.appendChild(groupDiv);
             restaurantsList.appendChild(li);
         });
     }
@@ -133,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (response.ok) {
                 const result = await response.json();
-                playAnimation(result.name, selectedCategoryIds);
+                playAnimation(result.name, selectedCategoryIds, result);
             } else {
                 const error = await response.json();
                 resultContainer.innerHTML = error.error || 'Error getting result';
@@ -146,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function playAnimation(winner, selectedCategoryIds) {
+    function playAnimation(winner, selectedCategoryIds, fullResult) {
         const names = latestRestaurants
             .filter(r => {
                 if (!selectedCategoryIds || selectedCategoryIds.length === 0) return true;
@@ -159,7 +161,17 @@ document.addEventListener('DOMContentLoaded', function() {
         resultContainer.classList.remove('empty');
         const step = () => {
             if (delay > 500) {
-                resultContainer.innerHTML = winner;
+                // display clickable winner if note is URL
+                if (fullResult.note && /^https?:\/\//.test(fullResult.note)) {
+                    resultContainer.innerHTML = `<a href="${fullResult.note}" id="winnerLink" target="_blank">${winner}</a>`;
+                    document.getElementById('winnerLink').addEventListener('click', () => {
+                        fetch(`/api/restaurants/${fullResult.id}/view`, {method:'POST'}).catch(()=>{});
+                    });
+                } else {
+                    resultContainer.innerHTML = winner;
+                }
+                // update stats after spin
+                loadStats();
                 return;
             }
             resultContainer.innerHTML = names[idx % names.length];
@@ -168,5 +180,16 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(step, delay);
         };
         step();
+    }
+
+    async function loadStats() {
+        try {
+            const resp = await fetch('/api/stats');
+            const s = await resp.json();
+            const container = document.getElementById('statsContainer');
+            container.textContent = `Restaurants: ${s.restaurants}   Spins: ${s.spins}   Views: ${s.views}`;
+        } catch (e) {
+            console.error('stats error', e);
+        }
     }
 });
