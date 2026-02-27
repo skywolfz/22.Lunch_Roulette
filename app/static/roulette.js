@@ -116,8 +116,8 @@ class RouletteWheel {
             this.rotation = startRotation + (endRotation - startRotation) * easedProgress;
             this.draw();
             
-            if (progress < 1) {
-                requestAnimationFrame(animate);
+            if (progress < 1 && this.isSpinning) {
+                this.animationId = requestAnimationFrame(animate);
             } else {
                 this.isSpinning = false;
                 if (callback) callback();
@@ -130,8 +130,11 @@ class RouletteWheel {
     stop(callback = null) {
         if (!this.isSpinning) return;
         
-        // Stop immediately with current rotation
-        const elapsed = Date.now();
+        // Cancel any scheduled animation frame and mark not spinning
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+            this.animationId = null;
+        }
         this.isSpinning = false;
         this.draw();
         

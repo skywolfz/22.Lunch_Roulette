@@ -183,6 +183,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    max-width: 400px;
 }
 
 .management-buttons {
@@ -301,8 +302,13 @@ input[type="text"] {
     transition: border-color 0.3s;
     background-color: var(--bg-secondary);
     color: var(--text-secondary);
+    max-width: 100%;
 }
 
+/* narrower add-restaurant inputs on admin page */
+body.admin-page .input-section input[type="text"] {
+    max-width: 300px;
+}
 
 input[type="text"]:focus {
     outline: none;
@@ -484,14 +490,15 @@ input[type="text"]:focus {
 }
 
 .category-stats-item {
-    padding: 8px 12px;
-    border-radius: 6px;
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    white-space: nowrap;
+    /* render as inline text, allow wrapping via parent flex container */
+    display: inline;
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: none;
+    white-space: normal;
     font-size: 0.9rem;
-    text-align: center;
-    color: var(--text-secondary);
+    color: var(--text-primary);
 }
 
 .roulette-section {
@@ -565,13 +572,20 @@ input[type="text"]:focus {
     font-size: 1.5rem;
 }
 
-#restaurantsList {
+/* main page stats list -- apply only on index body */
+body.index-page #restaurantsList {
     list-style: none;
     display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    gap: 10px;
+    flex-wrap: wrap;
+    gap: 6px;
     overflow-x: auto;
+    padding: 0;
+    margin: 0;
+}
+
+/* admin page restaurant list should remain vertical */
+body.admin-page #restaurantsList {
+    list-style: none;
     padding: 0;
     margin: 0;
 }
