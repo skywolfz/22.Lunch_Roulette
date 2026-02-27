@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', function() {
     let animationTimer = null;
     let currentWinner = null;
     let currentWinnerResult = null;
+    let roulette = null;
+    
+    // Initialize roulette wheel
+    roulette = new RouletteWheel('rouletteCanvas');
     
     // Load initial data
     loadCategories();
@@ -21,6 +25,13 @@ document.addEventListener('DOMContentLoaded', function() {
     goBtn.addEventListener('click', spinRoulette);
     document.getElementById('stopBtn').addEventListener('click', stopAnimation);
     selectAllCheckbox.addEventListener('change', toggleSelectAll);
+    
+    // Update restaurant list when category selection changes
+    document.addEventListener('change', (e) => {
+        if (e.target.type === 'checkbox' && e.target.dataset?.categoryId) {
+            updateFilteredRestaurantsList();
+        }
+    });
 
     
     async function loadCategories() {
@@ -85,36 +96,43 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function renderRestaurants(restaurants) {
         latestRestaurants = restaurants; // keep copy for animation
+        updateFilteredRestaurantsList();
+    }
+    
+    function updateFilteredRestaurantsList() {
         restaurantsList.innerHTML = '';
         
-        if (restaurants.length === 0) {
+        // Get selected category IDs
+        const selectedCategoryIds = Object.entries(categoryCheckboxes)
+            .filter(([, checkbox]) => checkbox.checked)
+            .map(([categoryId]) => parseInt(categoryId));
+        
+        // Filter restaurants based on selected categories
+        let filteredRestaurants = latestRestaurants;
+        if (selectedCategoryIds.length > 0) {
+            filteredRestaurants = latestRestaurants.filter(r => 
+                selectedCategoryIds.includes(r.category_id)
+            );
+        }
+        
+        // Update roulette wheel with filtered list
+        if (roulette) {
+            roulette.setRestaurants(filteredRestaurants);
+        }
+        
+        if (filteredRestaurants.length === 0) {
             const li = document.createElement('li');
-            li.textContent = 'No restaurants added yet';
+            li.textContent = 'No restaurants in selected categories';
             li.style.color = '#a0aec0';
             restaurantsList.appendChild(li);
             return;
         }
         
-        // group by category
-        const groups = {};
-        restaurants.forEach(r => {
-            if (!groups[r.category]) groups[r.category] = [];
-            groups[r.category].push(r);
-        });
-        Object.keys(groups).sort().forEach(cat => {
+        // Show as simple list (like admin page)
+        filteredRestaurants.forEach(r => {
             const li = document.createElement('li');
-            const title = document.createElement('strong');
-            title.textContent = cat;
-            li.appendChild(title);
-            const groupDiv = document.createElement('div');
-            groupDiv.className = 'rest-group';
-            groups[cat].slice(0,4).forEach(r => {
-                const span = document.createElement('span');
-                span.className = 'rest-item';
-                span.textContent = r.name;
-                groupDiv.appendChild(span);
-            });
-            li.appendChild(groupDiv);
+            li.className = 'restaurant-item-simple';
+            li.innerHTML = `<strong>${r.name}</strong><br><small>${r.category}</small>`;
             restaurantsList.appendChild(li);
         });
     }
@@ -165,6 +183,14 @@ document.addEventListener('DOMContentLoaded', function() {
         resultContainer.classList.remove('empty');
         currentWinner = winner;
         currentWinnerResult = fullResult;
+        
+        // Start roulette wheel spin
+        if (roulette && roulette.restaurants.length > 0) {
+            roulette.spin(5000, () => {
+                // Spin complete
+            });
+        }
+        
         const step = () => {
             if (delay > 500) {
                 displayWinner(winner, fullResult);
@@ -194,13 +220,19 @@ document.addEventListener('DOMContentLoaded', function() {
         if (animationTimer) {
             clearTimeout(animationTimer);
             animationTimer = null;
-            // show the current winner instead of just 'Stopped'
-            if (currentWinner && currentWinnerResult) {
-                displayWinner(currentWinner, currentWinnerResult);
-                loadStats();
-            } else {
-                resultContainer.innerHTML = 'Stopped';
-            }
+        }
+        
+        // Stop roulette wheel
+        if (roulette) {
+            roulette.stop();
+        }
+        
+        // show the current winner instead of just 'Stopped'
+        if (currentWinner && currentWinnerResult) {
+            displayWinner(currentWinner, currentWinnerResult);
+            loadStats();
+        } else {
+            resultContainer.innerHTML = 'Stopped';
         }
     }
 

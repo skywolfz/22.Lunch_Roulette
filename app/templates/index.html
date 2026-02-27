@@ -36,10 +36,19 @@
                 </div>
             </div>
             
-            <!-- Right Panel: Restaurant List (read-only) -->
+            <!-- Right Panel: Restaurant List and Roulette -->
             <div class="right-panel">
-                <h2>Restaurants</h2>
-                <ul id="restaurantsList"></ul>
+                <div class="restaurants-section">
+                    <h2>Restaurants</h2>
+                    <ul id="restaurantsList"></ul>
+                </div>
+                
+                <div class="roulette-section">
+                    <div id="rouletteContainer" class="roulette-container">
+                        <canvas id="rouletteCanvas" width="300" height="300"></canvas>
+                        <div id="roulettePointer" class="roulette-pointer"></div>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- stats at bottom of page -->
@@ -49,7 +58,7 @@
     </div>
     
     <script src="{{ url_for('static', filename='themes.js') }}"></script>
+    <script src="{{ url_for('static', filename='roulette.js') }}"></script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
-    <script src="{{ url_for('static', filename='themes.js') }}"></script>
 </body>
 </html>

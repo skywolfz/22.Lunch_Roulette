@@ -135,7 +135,7 @@ def update_restaurant(restaurant_id):
     data = request.json
     name = data.get('name', '').strip()
     category_name = data.get('category', '').strip() or 'unknown'
-    note = data.get('note', '').strip() or None
+    
     if name:
         restaurant.name = name
     # handle category change
@@ -146,7 +146,12 @@ def update_restaurant(restaurant_id):
             db.session.add(cat)
             db.session.flush()
         restaurant.category_id = cat.id
-    restaurant.note = note
+    
+    # only update note if it was provided in the request
+    if 'note' in data:
+        note = data.get('note', '').strip() or None
+        restaurant.note = note
+    
     db.session.commit()
     return jsonify(restaurant.to_dict()), 200
 

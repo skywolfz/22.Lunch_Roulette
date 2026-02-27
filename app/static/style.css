@@ -424,6 +424,86 @@ input[type="text"]:focus {
     flex: 1;
     border-left: 2px solid var(--border-color);
     padding-left: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.restaurants-section {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.restaurants-section h2 {
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+}
+
+.restaurants-section ul {
+    list-style: none;
+    padding: 0;
+    overflow-y: auto;
+    flex: 1;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: var(--bg-secondary);
+}
+
+.restaurant-item-simple {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.restaurant-item-simple:last-child {
+    border-bottom: none;
+}
+
+.restaurant-item-simple strong {
+    display: block;
+    margin-bottom: 3px;
+}
+
+.restaurant-item-simple small {
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.roulette-section {
+    text-align: center;
+    padding: 20px;
+    background-color: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.roulette-container {
+    position: relative;
+    display: inline-block;
+}
+
+#rouletteCanvas {
+    display: block;
+    border: 3px solid var(--primary-dark);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.roulette-pointer {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-top: 20px solid var(--primary-dark);
+    z-index: 10;
 }
 
 /* grouped restaurant list styles */
