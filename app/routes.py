@@ -128,25 +128,32 @@ def export_data():
 @main_bp.route('/api/import', methods=['POST'])
 def import_data():
     """Import restaurants JSON, overwriting existing data"""
-    data = request.json
-    if not data:
-        return jsonify({'error': 'Invalid payload'}), 400
-    # optionally clear existing
-    Restaurant.query.delete()
-    Category.query.delete()
-    db.session.commit()
-    for r in data.get('restaurants', []):
-        name = r.get('name', '').strip()
-        catname = r.get('category', '').strip() or 'unknown'
-        note = r.get('note', '').strip() or None
-        if not name:
-            continue
-        cat = Category.query.filter_by(name=catname).first()
-        if not cat:
-            cat = Category(name=catname)
-            db.session.add(cat)
-            db.session.flush()
-        restaurant = Restaurant(name=name, category_id=cat.id, note=note)
-        db.session.add(restaurant)
-    db.session.commit()
-    return jsonify({'imported': len(data.get('restaurants', []))}), 200
+    data = request.get_json(silent=True)
+    if not data or 'restaurants' not in data:
+        return jsonify({'error': 'Payload must contain "restaurants" array'}), 400
+    restaurants_list = data.get('restaurants', [])
+    if not isinstance(restaurants_list, list) or len(restaurants_list) == 0:
+        return jsonify({'error': 'No restaurants found in payload'}), 400
+    try:
+        # clear existing data first
+        Restaurant.query.delete()
+        Category.query.delete()
+        # add new records
+        for r in restaurants_list:
+            name = (r.get('name') or '').strip()
+            catname = (r.get('category') or '').strip() or 'unknown'
+            note = (r.get('note') or '').strip() or None
+            if not name:
+                continue
+            cat = Category.query.filter_by(name=catname).first()
+            if not cat:
+                cat = Category(name=catname)
+                db.session.add(cat)
+                db.session.flush()
+            restaurant = Restaurant(name=name, category_id=cat.id, note=note)
+            db.session.add(restaurant)
+        db.session.commit()
+        return jsonify({'imported': len(restaurants_list)}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': f'Import failed: {str(e)}'}), 500

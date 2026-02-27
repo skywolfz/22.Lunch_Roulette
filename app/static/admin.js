@@ -179,16 +179,23 @@ document.addEventListener('DOMContentLoaded', function() {
         reader.onload = async () => {
             try {
                 const json = JSON.parse(reader.result);
-                await fetch('/api/import', {
+                const resp = await fetch('/api/import', {
                     method: 'POST',
                     headers: {'Content-Type':'application/json'},
                     body: JSON.stringify(json)
                 });
+                const result = await resp.json();
+                if (!resp.ok) {
+                    console.error('import failed', result);
+                    alert('Import error: ' + (result.error || resp.statusText));
+                } else {
+                    alert('Imported ' + result.imported + ' restaurants');
+                }
                 loadRestaurants();
                 loadCategories();
             } catch (err) {
                 console.error('import error', err);
-                alert('Failed to import');
+                alert('Failed to import: ' + err.message);
             }
         };
         reader.readAsText(file);
