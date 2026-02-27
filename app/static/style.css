@@ -79,13 +79,12 @@ body {
     display: flex;
     gap: 10px;
     margin-top: 15px;
+    flex-wrap: wrap;
 }
 
-.btn-delete-all,
-.btn-export,
-.btn-import {
+.btn-delete-all {
     padding: 8px 16px;
-    background-color: #d53f8c;
+    background-color: #e53e3e;
     color: white;
     border: none;
     border-radius: 6px;
@@ -94,10 +93,74 @@ body {
     transition: background-color 0.3s;
 }
 
-.btn-delete-all:hover,
-.btn-export:hover,
+.btn-delete-all:hover {
+    background-color: #c53030;
+}
+
+.btn-export {
+    padding: 8px 16px;
+    background-color: #3182ce;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.btn-export:hover {
+    background-color: #2c5aa0;
+}
+
+.btn-import {
+    padding: 8px 16px;
+    background-color: #2805ba;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
 .btn-import:hover {
-    background-color: #b83280;
+    background-color: #1f0a8a;
+}
+
+#deleteCategoriesBtn {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    width: fit-content;
+}
+
+.restaurant-category-edit {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.restaurant-category-input {
+    flex: 1;
+    padding: 6px 10px;
+    border: 2px solid #3182ce;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.btn-save-category {
+    padding: 6px 12px;
+    background-color: #2d7a3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.btn-save-category:hover {
+    background-color: #22543d;
 }
 
 input[type="text"] {

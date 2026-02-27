@@ -125,6 +125,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 categoryInput.value = '';
                 noteInput.value = '';
                 restaurantInput.focus();
+                // show confirmation message
+                const confirmDiv = document.getElementById('addConfirmation');
+                confirmDiv.textContent = `✓ ${name} has been created!`;
+                setTimeout(() => {
+                    confirmDiv.textContent = '';
+                }, 4000);
                 loadRestaurants();
             } else {
                 alert('Error adding restaurant');
@@ -238,26 +244,72 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function editField(restaurant, field, span) {
-        const input = document.createElement('input');
-        if (field==='category') {
-            input.setAttribute('list','categoryList');
+        if (field === 'category') {
+            // Category edit with save button
+            const wrapper = document.createElement('div');
+            wrapper.className = 'restaurant-category-edit';
+            
+            const input = document.createElement('input');
+            input.className = 'restaurant-category-input';
+            input.setAttribute('list', 'categoryList');
+            input.type = 'text';
+            input.value = span.textContent;
+            
+            const saveBtn = document.createElement('button');
+            saveBtn.className = 'btn-save-category';
+            saveBtn.textContent = 'Save';
+            
+            wrapper.appendChild(input);
+            wrapper.appendChild(saveBtn);
+            span.replaceWith(wrapper);
+            
+            input.focus();
+            // auto-expand dropdown and filter by input
+            input.addEventListener('input', () => {
+                // trigger datalist filtering
+                input.setAttribute('value', input.value);
+            });
+            
+            const saveChanges = async () => {
+                const newVal = input.value.trim();
+                if (newVal) {
+                    const payload = { category: newVal };
+                    await fetch(`/api/restaurants/${restaurant.id}`, {
+                        method: 'PUT',
+                        headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify(payload)
+                    });
+                    loadRestaurants();
+                    loadCategories();
+                }
+            };
+            
+            saveBtn.addEventListener('click', saveChanges);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    saveChanges();
+                }
+            });
+        } else {
+            // Note edit (original inline edit)
+            const input = document.createElement('input');
+            input.value = span.textContent;
+            span.replaceWith(input);
+            input.focus();
+            input.addEventListener('blur', async () => {
+                const newVal = input.value.trim();
+                if (newVal && newVal !== span.textContent) {
+                    const payload = {};
+                    payload[field] = newVal;
+                    await fetch(`/api/restaurants/${restaurant.id}`, {
+                        method: 'PUT',
+                        headers: {'Content-Type':'application/json'},
+                        body: JSON.stringify(payload)
+                    });
+                }
+                loadRestaurants();
+                loadCategories();
+            });
         }
-        input.value = span.textContent;
-        span.replaceWith(input);
-        input.focus();
-        input.addEventListener('blur', async () => {
-            const newVal = input.value.trim();
-            if (newVal && newVal !== span.textContent) {
-                const payload = {};
-                payload[field] = newVal;
-                await fetch(`/api/restaurants/${restaurant.id}`, {
-                    method: 'PUT',
-                    headers: {'Content-Type':'application/json'},
-                    body: JSON.stringify(payload)
-                });
-            }
-            loadRestaurants();
-            loadCategories();
-        });
     }
 });

@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let categoryCheckboxes = {};
     let latestRestaurants = [];
     let animationTimer = null;
+    let currentWinner = null;
+    let currentWinnerResult = null;
     
     // Load initial data
     loadCategories();
@@ -161,14 +163,11 @@ document.addEventListener('DOMContentLoaded', function() {
         let idx = 0;
         let delay = 50;
         resultContainer.classList.remove('empty');
+        currentWinner = winner;
+        currentWinnerResult = fullResult;
         const step = () => {
             if (delay > 500) {
-                // display clickable winner if note is URL
-                if (fullResult.note && /^https?:\/\//.test(fullResult.note)) {
-                    resultContainer.innerHTML = `<a href="${fullResult.note}" id="winnerLink" target="_blank">${winner}</a>`;
-                } else {
-                    resultContainer.innerHTML = winner;
-                }
+                displayWinner(winner, fullResult);
                 // update stats after spin
                 loadStats();
                 animationTimer = null;
@@ -182,11 +181,26 @@ document.addEventListener('DOMContentLoaded', function() {
         step();
     }
 
+    function displayWinner(winner, fullResult) {
+        // display clickable winner if note is URL
+        if (fullResult.note && /^https?:\/\//.test(fullResult.note)) {
+            resultContainer.innerHTML = `<a href="${fullResult.note}" id="winnerLink" target="_blank">${winner}</a>`;
+        } else {
+            resultContainer.innerHTML = winner;
+        }
+    }
+
     function stopAnimation() {
         if (animationTimer) {
             clearTimeout(animationTimer);
             animationTimer = null;
-            resultContainer.innerHTML = 'Stopped';
+            // show the current winner instead of just 'Stopped'
+            if (currentWinner && currentWinnerResult) {
+                displayWinner(currentWinner, currentWinnerResult);
+                loadStats();
+            } else {
+                resultContainer.innerHTML = 'Stopped';
+            }
         }
     }
 
