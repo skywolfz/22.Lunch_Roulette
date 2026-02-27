@@ -81,6 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
         Object.values(categoryCheckboxes).forEach(checkbox => {
             checkbox.checked = isChecked;
         });
+        updateFilteredRestaurantsList();
     }
     
     
