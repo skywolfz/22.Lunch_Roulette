@@ -101,38 +101,41 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function updateFilteredRestaurantsList() {
         restaurantsList.innerHTML = '';
-        
+
         // Get selected category IDs
         const selectedCategoryIds = Object.entries(categoryCheckboxes)
             .filter(([, checkbox]) => checkbox.checked)
             .map(([categoryId]) => parseInt(categoryId));
-        
-        // Filter restaurants based on selected categories
-        let filteredRestaurants = latestRestaurants;
-        if (selectedCategoryIds.length > 0) {
-            filteredRestaurants = latestRestaurants.filter(r => 
-                selectedCategoryIds.includes(r.category_id)
-            );
-        }
-        
+
+        // Build the list of restaurants that match the selection for the roulette
+        const filteredRestaurants = selectedCategoryIds.length > 0
+            ? latestRestaurants.filter(r => selectedCategoryIds.includes(r.category_id))
+            : latestRestaurants.slice();
+
         // Update roulette wheel with filtered list
         if (roulette) {
             roulette.setRestaurants(filteredRestaurants);
         }
-        
-        if (filteredRestaurants.length === 0) {
+
+        // If no categories selected, show a message
+        if (selectedCategoryIds.length === 0) {
             const li = document.createElement('li');
-            li.textContent = 'No restaurants in selected categories';
+            li.textContent = 'No categories selected';
             li.style.color = '#a0aec0';
             restaurantsList.appendChild(li);
             return;
         }
-        
-        // Show as simple list (like admin page)
-        filteredRestaurants.forEach(r => {
+
+        // Display horizontal category stats (spins/view counts)
+        const catsToShow = allCategories.filter(c => selectedCategoryIds.includes(c.id));
+        catsToShow.forEach(cat => {
+            const restaurantsInCat = latestRestaurants.filter(r => r.category_id === cat.id);
+            const totalSpins = restaurantsInCat.reduce((sum, r) => sum + (r.spin_count || 0), 0);
+            const totalViews = restaurantsInCat.reduce((sum, r) => sum + (r.view_count || 0), 0);
+
             const li = document.createElement('li');
-            li.className = 'restaurant-item-simple';
-            li.innerHTML = `<strong>${r.name}</strong><br><small>${r.category}</small>`;
+            li.className = 'category-stats-item';
+            li.innerHTML = `<strong>${cat.name}</strong><br><small>spins: ${totalSpins} views: ${totalViews}</small>`;
             restaurantsList.appendChild(li);
         });
     }

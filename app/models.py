@@ -29,7 +29,8 @@ class Restaurant(db.Model):
             'category': self.category.name if self.category else 'unknown',
             'category_id': self.category_id,
             'note': self.note,
-            'spin_count': self.spin_count
+            'spin_count': self.spin_count,
+            'view_count': self.view_count
         }
 
 

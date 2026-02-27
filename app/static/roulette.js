@@ -87,13 +87,14 @@ class RouletteWheel {
         // Calculate target rotation to land on specific restaurant or random
         let endRotation = startRotation + spins * 2 * Math.PI;
         if (targetRestaurantId !== null && this.restaurants.length > 0) {
-            // Find the restaurant by ID
+            // Find the restaurant by ID in the current list
             const targetIndex = this.restaurants.findIndex(r => r.id === targetRestaurantId);
             if (targetIndex !== -1) {
                 const sliceAngle = (2 * Math.PI) / this.restaurants.length;
-                // Position the slice at the top (pointer is at top)
-                const targetAngle = -targetIndex * sliceAngle - sliceAngle / 2;
-                // Normalize angle to be within reasonable range
+                // We want the middle of the target slice to line up with the pointer at the top of
+                // the wheel. The pointer sits at -90° (-Math.PI/2) relative to the canvas coordinate
+                // system. Calculate the required rotation offset accordingly.
+                const targetAngle = -Math.PI / 2 - (targetIndex + 0.5) * sliceAngle;
                 endRotation = startRotation + spins * 2 * Math.PI + targetAngle;
             }
         } else {
