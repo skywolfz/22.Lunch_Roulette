@@ -75,6 +75,31 @@ body {
     gap: 10px;
 }
 
+.management-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-delete-all,
+.btn-export,
+.btn-import {
+    padding: 8px 16px;
+    background-color: #d53f8c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.btn-delete-all:hover,
+.btn-export:hover,
+.btn-import:hover {
+    background-color: #b83280;
+}
+
 input[type="text"] {
     padding: 12px;
     border: 2px solid #bbb;

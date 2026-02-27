@@ -73,11 +73,80 @@ def spin():
 
 @main_bp.route('/api/restaurants/<int:restaurant_id>', methods=['DELETE'])
 def delete_restaurant(restaurant_id):
-    """Delete a restaurant"""
+    """Delete a restaurant and remove empty category"""
     restaurant = Restaurant.query.get(restaurant_id)
     if not restaurant:
         return jsonify({'error': 'Restaurant not found'}), 404
-    
+    cat = restaurant.category
     db.session.delete(restaurant)
     db.session.commit()
+    # if category now has no restaurants, remove it
+    if cat and not cat.restaurants:
+        db.session.delete(cat)
+        db.session.commit()
     return jsonify({'success': True}), 200
+
+@main_bp.route('/api/restaurants', methods=['DELETE'])
+def delete_all_restaurants():
+    """Remove every restaurant and category"""
+    num = Restaurant.query.delete()
+    Category.query.delete()
+    db.session.commit()
+    return jsonify({'deleted': num}), 200
+
+@main_bp.route('/api/restaurants/<int:restaurant_id>', methods=['PUT'])
+def update_restaurant(restaurant_id):
+    """Edit an existing restaurant"""
+    restaurant = Restaurant.query.get(restaurant_id)
+    if not restaurant:
+        return jsonify({'error': 'Restaurant not found'}), 404
+    data = request.json
+    name = data.get('name', '').strip()
+    category_name = data.get('category', '').strip() or 'unknown'
+    note = data.get('note', '').strip() or None
+    if name:
+        restaurant.name = name
+    # handle category change
+    if category_name and category_name != restaurant.category.name:
+        cat = Category.query.filter_by(name=category_name).first()
+        if not cat:
+            cat = Category(name=category_name)
+            db.session.add(cat)
+            db.session.flush()
+        restaurant.category_id = cat.id
+    restaurant.note = note
+    db.session.commit()
+    return jsonify(restaurant.to_dict()), 200
+
+@main_bp.route('/api/export', methods=['GET'])
+def export_data():
+    """Return all restaurants + categories as JSON"""
+    restaurants = [r.to_dict() for r in Restaurant.query.all()]
+    categories = [c.to_dict() for c in Category.query.all()]
+    return jsonify({'restaurants': restaurants, 'categories': categories})
+
+@main_bp.route('/api/import', methods=['POST'])
+def import_data():
+    """Import restaurants JSON, overwriting existing data"""
+    data = request.json
+    if not data:
+        return jsonify({'error': 'Invalid payload'}), 400
+    # optionally clear existing
+    Restaurant.query.delete()
+    Category.query.delete()
+    db.session.commit()
+    for r in data.get('restaurants', []):
+        name = r.get('name', '').strip()
+        catname = r.get('category', '').strip() or 'unknown'
+        note = r.get('note', '').strip() or None
+        if not name:
+            continue
+        cat = Category.query.filter_by(name=catname).first()
+        if not cat:
+            cat = Category(name=catname)
+            db.session.add(cat)
+            db.session.flush()
+        restaurant = Restaurant(name=name, category_id=cat.id, note=note)
+        db.session.add(restaurant)
+    db.session.commit()
+    return jsonify({'imported': len(data.get('restaurants', []))}), 200

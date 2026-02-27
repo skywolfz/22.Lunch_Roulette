@@ -18,6 +18,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (e.key === 'Enter') addRestaurant();
     });
 
+    document.getElementById('deleteAllBtn').addEventListener('click', deleteAllRestaurants);
+    document.getElementById('exportBtn').addEventListener('click', exportData);
+    document.getElementById('importBtn').addEventListener('click', () => document.getElementById('importFile').click());
+    document.getElementById('importFile').addEventListener('change', importData);
+
     async function loadRestaurants() {
         try {
             const response = await fetch('/api/restaurants');
@@ -27,6 +32,25 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error loading restaurants:', error);
         }
     }
+
+    async function loadCategories() {
+        try {
+            const resp = await fetch('/api/categories');
+            const cats = await resp.json();
+            const datalist = document.getElementById('categoryList');
+            datalist.innerHTML = '';
+            cats.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.name;
+                datalist.appendChild(opt);
+            });
+        } catch (err) {
+            console.error('Error loading categories for datalist', err);
+        }
+    }
+
+    // populate datalist before first use
+    loadCategories();
 
     function renderRestaurants(restaurants) {
         restaurantsList.innerHTML = '';
@@ -51,29 +75,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const catSpan = document.createElement('div');
             catSpan.className = 'restaurant-category';
-            catSpan.textContent = `Category: ${restaurant.category}`;
+            catSpan.textContent = restaurant.category;
+            catSpan.addEventListener('click', () => editField(restaurant, 'category', catSpan));
 
             const noteSpan = document.createElement('div');
             noteSpan.className = 'restaurant-note';
             if (restaurant.note) {
-                // if note looks like url, make anchor
                 if (/^https?:\/\//.test(restaurant.note)) {
                     noteSpan.innerHTML = `<a href="${restaurant.note}" target="_blank">${restaurant.note}</a>`;
                 } else {
                     noteSpan.textContent = restaurant.note;
                 }
             }
+            noteSpan.addEventListener('click', () => editField(restaurant, 'note', noteSpan));
 
             info.appendChild(name);
             info.appendChild(catSpan);
             info.appendChild(noteSpan);
+
+            li.appendChild(info);
 
             const deleteBtn = document.createElement('button');
             deleteBtn.className = 'restaurant-delete';
             deleteBtn.textContent = 'Delete';
             deleteBtn.addEventListener('click', () => deleteRestaurant(restaurant.id));
 
-            li.appendChild(info);
             li.appendChild(deleteBtn);
             restaurantsList.appendChild(li);
         });
@@ -117,5 +143,78 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (e) {
             console.error('delete error', e);
         }
+    }
+
+    async function deleteAllRestaurants() {
+        if (!confirm('Delete ALL restaurants? This cannot be undone.')) return;
+        try {
+            const resp = await fetch('/api/restaurants', { method: 'DELETE' });
+            if (resp.ok) loadRestaurants();
+        } catch (e) {
+            console.error('delete all error', e);
+        }
+    }
+
+    async function exportData() {
+        try {
+            const resp = await fetch('/api/export');
+            const data = await resp.json();
+            const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'restaurants_export.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        } catch (e) {
+            console.error('export error', e);
+        }
+    }
+
+    function importData(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = async () => {
+            try {
+                const json = JSON.parse(reader.result);
+                await fetch('/api/import', {
+                    method: 'POST',
+                    headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify(json)
+                });
+                loadRestaurants();
+                loadCategories();
+            } catch (err) {
+                console.error('import error', err);
+                alert('Failed to import');
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    function editField(restaurant, field, span) {
+        const input = document.createElement('input');
+        if (field==='category') {
+            input.setAttribute('list','categoryList');
+        }
+        input.value = span.textContent;
+        span.replaceWith(input);
+        input.focus();
+        input.addEventListener('blur', async () => {
+            const newVal = input.value.trim();
+            if (newVal && newVal !== span.textContent) {
+                const payload = {};
+                payload[field] = newVal;
+                await fetch(`/api/restaurants/${restaurant.id}`, {
+                    method: 'PUT',
+                    headers: {'Content-Type':'application/json'},
+                    body: JSON.stringify(payload)
+                });
+            }
+            loadRestaurants();
+            loadCategories();
+        });
     }
 });

@@ -32,6 +32,14 @@ The application will be available at `http://localhost:5000`. Use the "Restauran
 
 The database file (`lunch_roulette.db`) is stored in the project root and persists across container restarts via the volume mount.
 
+### Backups / Import
+
+From the **Restaurant List** (admin) page you can export your entire dataset to a JSON file using the **Export** button. To restore or import a previously exported file click **Import** and select the JSON. Importing will replace all current entries.
+
+### Deleting
+
+A **Delete All** button on the admin page will wipe every restaurant and its categories after you confirm. Use this when you want to start fresh.
+
 ### Manual Setup (without Docker)
 
 1. Create a virtual environment:

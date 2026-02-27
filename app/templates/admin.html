@@ -17,12 +17,20 @@
         <div class="main-content">
             <div class="left-panel">
                 <div class="input-section">
+                    <input list="categoryList" type="text" id="categoryInput" placeholder="Category (optional)" />
+                    <datalist id="categoryList"></datalist>
                     <input type="text" id="restaurantInput" placeholder="Enter restaurant name" />
-                    <input type="text" id="categoryInput" placeholder="Category (optional)" />
                     <input type="text" id="noteInput" placeholder="Note / hyperlink (optional)" />
                     <button id="addBtn" class="btn-add">Add</button>
                 </div>
                 
+                <div class="management-buttons">
+                    <button id="deleteAllBtn" class="btn-delete-all">Delete All</button>
+                    <button id="exportBtn" class="btn-export">Export</button>
+                    <input type="file" id="importFile" style="display:none" accept="application/json" />
+                    <button id="importBtn" class="btn-import">Import</button>
+                </div>
+
                 <h2>Existing Restaurants</h2>
                 <ul id="restaurantsList"></ul>
             </div>
