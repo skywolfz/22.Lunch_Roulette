@@ -245,34 +245,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function editField(restaurant, field, span) {
         if (field === 'category') {
-            // Category edit with save button
-            const wrapper = document.createElement('div');
-            wrapper.className = 'restaurant-category-edit';
+            // Category edit with dropdown
+            const select = document.createElement('select');
+            select.className = 'category-dropdown-edit';
             
-            const input = document.createElement('input');
-            input.className = 'restaurant-category-input';
-            input.setAttribute('list', 'categoryList');
-            input.type = 'text';
-            input.value = span.textContent;
+            // Add empty option
+            const emptyOpt = document.createElement('option');
+            emptyOpt.value = '';
+            emptyOpt.textContent = '-- Select Category --';
+            select.appendChild(emptyOpt);
             
-            const saveBtn = document.createElement('button');
-            saveBtn.className = 'btn-save-category';
-            saveBtn.textContent = 'Save';
-            
-            wrapper.appendChild(input);
-            wrapper.appendChild(saveBtn);
-            span.replaceWith(wrapper);
-            
-            input.focus();
-            // auto-expand dropdown and filter by input
-            input.addEventListener('input', () => {
-                // trigger datalist filtering
-                input.setAttribute('value', input.value);
+            // Add all categories
+            const categories = document.querySelectorAll('#categoryList option');
+            categories.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat.value;
+                opt.textContent = cat.value;
+                if (cat.value === span.textContent) {
+                    opt.selected = true;
+                }
+                select.appendChild(opt);
             });
             
-            const saveChanges = async () => {
-                const newVal = input.value.trim();
-                if (newVal) {
+            span.replaceWith(select);
+            select.focus();
+            
+            // Auto-save on selection
+            select.addEventListener('change', async () => {
+                const newVal = select.value.trim();
+                if (newVal && newVal !== span.textContent) {
                     const payload = { category: newVal };
                     await fetch(`/api/restaurants/${restaurant.id}`, {
                         method: 'PUT',
@@ -281,13 +282,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                     loadRestaurants();
                     loadCategories();
+                } else {
+                    // Cancel - reload to show original
+                    loadRestaurants();
+                    loadCategories();
                 }
-            };
+            });
             
-            saveBtn.addEventListener('click', saveChanges);
-            input.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    saveChanges();
+            // Escape key to cancel
+            select.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    loadRestaurants();
+                    loadCategories();
                 }
             });
         } else {

@@ -4,9 +4,96 @@
     box-sizing: border-box;
 }
 
+:root {
+    --primary-color: #4a90e2;
+    --primary-dark: #357ab8;
+    --primary-darker: #224f88;
+    --primary-light: #f0f4ff;
+    --secondary-color: #2a62a0;
+    --text-primary: white;
+    --text-secondary: #2d3748;
+    --border-color: #bbb;
+    --hover-bg: #edf2f7;
+    --error-color: #e53e3e;
+    --success-color: #2d7a3c;
+    --info-color: #3182ce;
+    --warning-color: #2805ba;
+    --bg-primary: white;
+    --bg-secondary: #f7fafc;
+}
+
+body.theme-dark {
+    --primary-color: #1a202c;
+    --primary-dark: #2d3748;
+    --primary-darker: #4a5568;
+    --primary-light: #2d3748;
+    --secondary-color: #4a5568;
+    --text-primary: #e2e8f0;
+    --text-secondary: #cbd5e0;
+    --border-color: #4a5568;
+    --hover-bg: #2d3748;
+    --bg-primary: #1a202c;
+    --bg-secondary: #2d3748;
+}
+
+body.theme-nord {
+    --primary-color: #5e81ac;
+    --primary-dark: #4c566a;
+    --primary-darker: #3b4252;
+    --secondary-color: #81a1c1;
+    --text-primary: #eceff4;
+    --text-secondary: #d8dee9;
+    --border-color: #4c566a;
+    --hover-bg: #3b4252;
+    --bg-primary: #2e3440;
+    --bg-secondary: #3b4252;
+}
+
+body.theme-dracula {
+    --primary-color: #44475a;
+    --primary-dark: #282a36;
+    --primary-darker: #1e1f29;
+    --secondary-color: #6272a4;
+    --text-primary: #f8f8f2;
+    --text-secondary: #f8f8f2;
+    --border-color: #44475a;
+    --hover-bg: #44475a;
+    --error-color: #ff5555;
+    --success-color: #50fa7b;
+    --info-color: #8be9fd;
+    --bg-primary: #282a36;
+    --bg-secondary: #44475a;
+}
+
+body.theme-solarized {
+    --primary-color: #268bd2;
+    --primary-dark: #073642;
+    --primary-darker: #002b36;
+    --secondary-color: #2aa198;
+    --text-primary: #93a1a1;
+    --text-secondary: #586e75;
+    --border-color: #073642;
+    --hover-bg: #073642;
+    --bg-primary: #fdf6e3;
+    --bg-secondary: #eee8d5;
+}
+
+body.theme-ocean {
+    --primary-color: #0074d9;
+    --primary-dark: #004085;
+    --primary-darker: #003366;
+    --secondary-color: #2196f3;
+    --text-primary: #ffffff;
+    --text-secondary: #2c3e50;
+    --border-color: #2196f3;
+    --hover-bg: #e3f2fd;
+    --bg-primary: #f0f5ff;
+    --bg-secondary: #e8f0ff;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #4a90e2 0%, #357ab8 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
     min-height: 100vh;
     padding: 20px;
 }
@@ -17,9 +104,31 @@ body {
     align-items: center;
 }
 
+.header-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.theme-selector {
+    padding: 8px 12px;
+    background-color: var(--secondary-color);
+    color: var(--text-primary);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.theme-selector:hover {
+    background-color: var(--primary-darker);
+}
+
 .admin-link {
-    color: white;
-    background-color: #2a62a0;
+    color: var(--text-primary);
+    background-color: var(--secondary-color);
     padding: 8px 16px;
     border-radius: 8px;
     text-decoration: none;
@@ -28,12 +137,12 @@ body {
 }
 
 .admin-link:hover {
-    background-color: #224f88;
+    background-color: var(--primary-darker);
 }
 
 .subtitle {
     text-align: center;
-    color: white;
+    color: var(--text-primary);
     font-size: 1rem;
     margin-bottom: 20px;
 }
@@ -46,7 +155,7 @@ body {
 
 .title {
     text-align: center;
-    color: white;
+    color: var(--text-primary);
     font-size: 3.5rem;
     margin-bottom: 40px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
@@ -55,11 +164,12 @@ body {
 .main-content {
     display: flex;
     gap: 30px;
-    background: white;
+    background: var(--bg-primary);
     border-radius: 15px;
     padding: 30px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     min-height: 600px;
+    color: var(--text-secondary);
 }
 
 .left-panel {
@@ -163,24 +273,36 @@ body {
     background-color: #22543d;
 }
 
+.category-dropdown-edit {
+    padding: 6px 10px;
+    border: 2px solid #3182ce;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    background-color: white;
+    color: #2d3748;
+}
+
 input[type="text"] {
     padding: 12px;
-    border: 2px solid #bbb;
+    border: 2px solid var(--border-color);
     border-radius: 8px;
     font-size: 1rem;
     transition: border-color 0.3s;
+    background-color: var(--bg-secondary);
+    color: var(--text-secondary);
 }
 
 
 input[type="text"]:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: var(--primary-color);
 }
 
 .btn-add {
     padding: 12px 24px;
-    background-color: #357ab8;
-    color: white;
+    background-color: var(--primary-dark);
+    color: var(--text-primary);
     border: none;
     border-radius: 8px;
     font-size: 1rem;
@@ -190,15 +312,16 @@ input[type="text"]:focus {
 }
 
 .btn-add:hover {
-    background-color: #2a5d99;
+    background-color: var(--primary-darker);
 }
 
 .categories-section {
-    border: 2px solid #357ab8;
+    border: 2px solid var(--primary-dark);
     padding: 15px;
     border-radius: 8px;
     max-height: 200px;
     overflow-y: auto;
+    background-color: var(--bg-secondary);
 }
 
 .checkbox-container {
@@ -245,8 +368,8 @@ input[type="text"]:focus {
 
 .btn-go {
     padding: 20px;
-    background-color: #2a62a0;
-    color: white;
+    background-color: var(--secondary-color);
+    color: var(--text-primary);
     border: none;
     border-radius: 8px;
     font-size: 1.5rem;
@@ -257,7 +380,7 @@ input[type="text"]:focus {
 }
 
 .btn-go:hover {
-    background-color: #224f88;
+    background-color: var(--primary-darker);
 }
 
 .btn-go:active {
@@ -265,7 +388,7 @@ input[type="text"]:focus {
 }
 
 #stopBtn {
-    background-color: #c53030;
+    background-color: var(--error-color);
 }
 
 /* ensure stats bar stays at bottom with some margin */
@@ -277,8 +400,8 @@ input[type="text"]:focus {
 }
 
 .result {
-    background-color: #f0f4ff;
-    border-left: 5px solid #2a62a0;
+    background-color: var(--primary-light);
+    border-left: 5px solid var(--primary-dark);
     padding: 20px;
     border-radius: 8px;
     min-height: 100px;
@@ -287,7 +410,7 @@ input[type="text"]:focus {
     justify-content: center;
     font-size: 1.8rem;
     font-weight: bold;
-    color: #1a236a;
+    color: var(--text-secondary);
     text-align: center;
     word-wrap: break-word;
 }
@@ -299,7 +422,7 @@ input[type="text"]:focus {
 
 .right-panel {
     flex: 1;
-    border-left: 2px solid #eee;
+    border-left: 2px solid var(--border-color);
     padding-left: 30px;
 }
 
@@ -348,46 +471,38 @@ input[type="text"]:focus {
 }
 
 .restaurant-item {
-    background-color: #f7fafc;
+    background-color: var(--bg-secondary);
     padding: 12px 15px;
     margin-bottom: 10px;
     border-radius: 6px;
-    border-left: 4px solid #357ab8;
+    border-left: 4px solid var(--primary-dark);
     display: flex;
     justify-content: space-between;
     align-items: center;
     transition: background-color 0.2s;
 }
 
-.restaurant-note a {
-    color: #2a62a0;
-    text-decoration: underline;
-}
-
 .restaurant-item:hover {
-    background-color: #edf2f7;
-}
-
-.restaurant-info {
-    flex: 1;
+    background-color: var(--hover-bg);
 }
 
 .restaurant-name {
     font-weight: bold;
-    color: #2d3748;
+    color: var(--text-secondary);
     font-size: 1rem;
 }
 
 .restaurant-category {
     font-size: 0.85rem;
-    color: #718096;
+    color: var(--text-secondary);
     margin-top: 3px;
+    opacity: 0.7;
 }
 
 
 .restaurant-delete {
-    background-color: #fc8181;
-    color: white;
+    background-color: var(--error-color);
+    color: var(--text-primary);
     border: none;
     border-radius: 4px;
     padding: 6px 12px;
@@ -397,7 +512,7 @@ input[type="text"]:focus {
 }
 
 .restaurant-delete:hover {
-    background-color: #f56565;
+    background-color: #c53030;
 }
 
 @media (max-width: 768px) {

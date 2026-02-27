@@ -25,6 +25,21 @@ def create_app(config_class=DevelopmentConfig):
         if 'spin_count' not in cols:
             db.session.execute(text('ALTER TABLE restaurant ADD COLUMN spin_count INTEGER NOT NULL DEFAULT 0'))
         db.session.commit()
+        
+        # Seed themes if not already in database
+        from app.models import Theme
+        if Theme.query.count() == 0:
+            themes = [
+                Theme(name='light', display_name='Light'),
+                Theme(name='dark', display_name='Dark'),
+                Theme(name='nord', display_name='Nord'),
+                Theme(name='dracula', display_name='Dracula'),
+                Theme(name='solarized', display_name='Solarized'),
+                Theme(name='ocean', display_name='Ocean'),
+            ]
+            for theme in themes:
+                db.session.add(theme)
+            db.session.commit()
     
     from app.routes import main_bp
     app.register_blueprint(main_bp)

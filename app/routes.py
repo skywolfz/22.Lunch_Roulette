@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify
 import random
 from app import db
-from app.models import Restaurant, Category, Stats
+from app.models import Restaurant, Category, Stats, Theme
 
 main_bp = Blueprint('main', __name__)
 
@@ -207,3 +207,11 @@ def import_data():
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': f'Import failed: {str(e)}'}), 500
+
+
+# Theme endpoints
+@main_bp.route('/api/themes', methods=['GET'])
+def get_themes():
+    """Get all available themes"""
+    themes = Theme.query.all()
+    return jsonify([t.to_dict() for t in themes])

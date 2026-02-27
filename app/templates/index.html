@@ -10,7 +10,10 @@
     <div class="container">
         <div class="header-row">
             <h1 class="title"><a href="/" class="home-link">Lunch Roulette</a></h1>
-            <a href="/admin" class="admin-link">Restaurant List</a>
+            <div class="header-controls">
+                <select id="themeSelector" class="theme-selector"></select>
+                <a href="/admin" class="admin-link">Restaurant List</a>
+            </div>
         </div>
         <div class="subtitle">SDUSD Network & Services</div>
 
@@ -45,6 +48,8 @@
         </div>
     </div>
     
+    <script src="{{ url_for('static', filename='themes.js') }}"></script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='themes.js') }}"></script>
 </body>
 </html>
