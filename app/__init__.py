@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from config import DevelopmentConfig
+from sqlalchemy import text
 
 db = SQLAlchemy()
 
@@ -20,9 +21,9 @@ def create_app(config_class=DevelopmentConfig):
         if inspector.has_table('restaurant'):
             cols = [c['name'] for c in inspector.get_columns('restaurant')]
         if 'view_count' not in cols:
-            db.session.execute('ALTER TABLE restaurant ADD COLUMN view_count INTEGER NOT NULL DEFAULT 0')
+            db.session.execute(text('ALTER TABLE restaurant ADD COLUMN view_count INTEGER NOT NULL DEFAULT 0'))
         if 'spin_count' not in cols:
-            db.session.execute('ALTER TABLE restaurant ADD COLUMN spin_count INTEGER NOT NULL DEFAULT 0')
+            db.session.execute(text('ALTER TABLE restaurant ADD COLUMN spin_count INTEGER NOT NULL DEFAULT 0'))
         db.session.commit()
     
     from app.routes import main_bp
