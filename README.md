@@ -9,8 +9,9 @@ A web application that helps you randomly pick a restaurant from your saved list
 - Filter by category checkboxes (displayed horizontally for easier selection)
 - "Select All" checkbox to include all categories
 - Spin to get a random restaurant recommendation
-- Track and display view/spin counts for restaurants
+- Track and display spin counts and total page views (views now refer to visits to the main page, not per restaurant)
 - "Lunch Roulette" title is clickable to refresh the main page
+- Added Stop button to cancel the roulette animation mid-spin
 - Restaurant list grouped by category with up to four items shown horizontally
 - Delete restaurants from the list
 - Fully containerized with Docker
@@ -86,7 +87,7 @@ Visit `http://localhost:5000` in your browser.
 
 ## How to Use
 
-- **View Random Restaurant**: On the main page choose categories (or leave none for all) and press the "Go!" button. A spinning animation will display before the final result. The top bar also shows total restaurants, spins, and views. If the chosen restaurant has a link in its note, the final name becomes clickable and view count is updated when clicked.
+- **View Random Restaurant**: On the main page choose categories (or leave none for all) and press the "Go!" button. A spinning animation will display before the final result. The bottom bar shows totals for restaurants, spins, and page views (each page load increments this). If the chosen restaurant has a link in its note, the final name becomes clickable.
 - **Manage Restaurants**: Click the "Restaurant List" link in the top‑right to go to the admin page. There you can add, edit notes (including hyperlinks), delete entries, and even manage categories via checkboxes. No login is required.
 
 ## Technologies Used

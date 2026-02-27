@@ -71,11 +71,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const name = document.createElement('div');
             name.className = 'restaurant-name';
             name.textContent = restaurant.name;
-            // show stats
-            const stats = document.createElement('div');
-            stats.className = 'restaurant-stats';
-            stats.textContent = `(views: ${restaurant.view_count||0}, spins: ${restaurant.spin_count||0})`;
-            info.appendChild(stats);
 
             const catSpan = document.createElement('div');
             catSpan.className = 'restaurant-category';

@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let allCategories = [];
     let categoryCheckboxes = {};
     let latestRestaurants = [];
+    let animationTimer = null;
     
     // Load initial data
     loadCategories();
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Event listeners
     goBtn.addEventListener('click', spinRoulette);
+    document.getElementById('stopBtn').addEventListener('click', stopAnimation);
     selectAllCheckbox.addEventListener('change', toggleSelectAll);
 
     
@@ -164,22 +166,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 // display clickable winner if note is URL
                 if (fullResult.note && /^https?:\/\//.test(fullResult.note)) {
                     resultContainer.innerHTML = `<a href="${fullResult.note}" id="winnerLink" target="_blank">${winner}</a>`;
-                    document.getElementById('winnerLink').addEventListener('click', () => {
-                        fetch(`/api/restaurants/${fullResult.id}/view`, {method:'POST'}).catch(()=>{});
-                    });
                 } else {
                     resultContainer.innerHTML = winner;
                 }
                 // update stats after spin
                 loadStats();
+                animationTimer = null;
                 return;
             }
             resultContainer.innerHTML = names[idx % names.length];
             idx++;
             delay *= 1.08; // slow down gradually
-            setTimeout(step, delay);
+            animationTimer = setTimeout(step, delay);
         };
         step();
+    }
+
+    function stopAnimation() {
+        if (animationTimer) {
+            clearTimeout(animationTimer);
+            animationTimer = null;
+            resultContainer.innerHTML = 'Stopped';
+        }
     }
 
     async function loadStats() {
@@ -187,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const resp = await fetch('/api/stats');
             const s = await resp.json();
             const container = document.getElementById('statsContainer');
-            container.textContent = `Restaurants: ${s.restaurants}   Spins: ${s.spins}   Views: ${s.views}`;
+            container.textContent = `Restaurants: ${s.restaurants}   Spins: ${s.spins}   Page views: ${s.page_views}`;
         } catch (e) {
             console.error('stats error', e);
         }

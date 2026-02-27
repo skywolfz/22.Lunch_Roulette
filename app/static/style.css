@@ -201,6 +201,18 @@ input[type="text"]:focus {
     transform: scale(0.98);
 }
 
+#stopBtn {
+    background-color: #c53030;
+}
+
+/* ensure stats bar stays at bottom with some margin */
+.stats {
+    text-align: center;
+    color: white;
+    margin: 20px 0 0 0;
+    font-size: 1rem;
+}
+
 .result {
     background-color: #f0f4ff;
     border-left: 5px solid #2a62a0;
@@ -309,11 +321,6 @@ input[type="text"]:focus {
     margin-top: 3px;
 }
 
-.restaurant-stats {
-    font-size: 0.75rem;
-    color: #a0aec0;
-    margin-top: 2px;
-}
 
 .restaurant-delete {
     background-color: #fc8181;
