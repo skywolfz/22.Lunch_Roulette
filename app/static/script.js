@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Start roulette wheel spin
         if (roulette && roulette.restaurants.length > 0) {
-            roulette.spin(5000, () => {
+            roulette.spin(5000, fullResult.id, () => {
                 // Spin complete
             });
         }

@@ -275,12 +275,18 @@ body {
 
 .category-dropdown-edit {
     padding: 6px 10px;
-    border: 2px solid #3182ce;
+    border: 2px solid var(--primary-color);
     border-radius: 4px;
     font-size: 0.85rem;
     cursor: pointer;
-    background-color: white;
-    color: #2d3748;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+.category-dropdown-edit:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2);
 }
 
 input[type="text"] {
@@ -577,6 +583,33 @@ input[type="text"]:focus {
     color: var(--text-secondary);
     margin-top: 3px;
     opacity: 0.7;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 6px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+}
+
+.restaurant-category:hover {
+    background-color: var(--bg-secondary);
+    opacity: 1;
+    transform: scale(1.02);
+}
+
+.category-label {
+    flex: 1;
+}
+
+.category-edit-icon {
+    font-size: 0.7rem;
+    opacity: 0.6;
+    transition: opacity 0.2s ease;
+}
+
+.restaurant-category:hover .category-edit-icon {
+    opacity: 1;
 }
 
 

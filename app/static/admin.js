@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const catSpan = document.createElement('div');
             catSpan.className = 'restaurant-category';
-            catSpan.textContent = restaurant.category;
+            catSpan.innerHTML = `<span class="category-label">${restaurant.category}</span><span class="category-edit-icon">▼</span>`;
             catSpan.addEventListener('click', () => editField(restaurant, 'category', catSpan));
 
             const noteSpan = document.createElement('div');
@@ -249,6 +249,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const select = document.createElement('select');
             select.className = 'category-dropdown-edit';
             
+            // Get the actual category text from the label element
+            const categoryLabel = span.querySelector('.category-label')?.textContent || span.textContent;
+            
             // Add empty option
             const emptyOpt = document.createElement('option');
             emptyOpt.value = '';
@@ -261,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const opt = document.createElement('option');
                 opt.value = cat.value;
                 opt.textContent = cat.value;
-                if (cat.value === span.textContent) {
+                if (cat.value === categoryLabel) {
                     opt.selected = true;
                 }
                 select.appendChild(opt);
@@ -273,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Auto-save on selection
             select.addEventListener('change', async () => {
                 const newVal = select.value.trim();
-                if (newVal && newVal !== span.textContent) {
+                if (newVal && newVal !== categoryLabel) {
                     const payload = { category: newVal };
                     await fetch(`/api/restaurants/${restaurant.id}`, {
                         method: 'PUT',

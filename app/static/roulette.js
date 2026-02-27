@@ -77,13 +77,29 @@ class RouletteWheel {
         this.ctx.stroke();
     }
     
-    spin(duration = 5000, callback = null) {
+    spin(duration = 5000, targetRestaurantId = null, callback = null) {
         if (this.isSpinning) return;
         this.isSpinning = true;
         
         const spins = 5; // number of full rotations
         const startRotation = this.rotation;
-        const endRotation = startRotation + spins * 2 * Math.PI + (Math.random() * Math.PI / 2);
+        
+        // Calculate target rotation to land on specific restaurant or random
+        let endRotation = startRotation + spins * 2 * Math.PI;
+        if (targetRestaurantId !== null && this.restaurants.length > 0) {
+            // Find the restaurant by ID
+            const targetIndex = this.restaurants.findIndex(r => r.id === targetRestaurantId);
+            if (targetIndex !== -1) {
+                const sliceAngle = (2 * Math.PI) / this.restaurants.length;
+                // Position the slice at the top (pointer is at top)
+                const targetAngle = -targetIndex * sliceAngle - sliceAngle / 2;
+                // Normalize angle to be within reasonable range
+                endRotation = startRotation + spins * 2 * Math.PI + targetAngle;
+            }
+        } else {
+            endRotation += Math.random() * Math.PI / 2;
+        }
+        
         const startTime = Date.now();
         
         const animate = () => {
