@@ -1,12 +1,20 @@
 from flask import Blueprint, render_template, request, jsonify
 import random
 from app import db
-from app.models import Restaurant, Category
+from app.models import Restaurant, Category, Stats
 
 main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/')
 def index():
+    # increment global page view counter
+    stat = Stats.query.filter_by(key='page_views').first()
+    if stat:
+        stat.value += 1
+    else:
+        stat = Stats(key='page_views', value=1)
+        db.session.add(stat)
+    db.session.commit()
     return render_template('index.html')
 
 @main_bp.route('/admin')
@@ -69,8 +77,15 @@ def spin():
         return jsonify({'error': 'No restaurants in selected categories'}), 404
     
     chosen = random.choice(restaurants)
-    # increment spin counter
+    # increment spin counter for restaurant
     chosen.spin_count = (chosen.spin_count or 0) + 1
+    # increment global spin counter stat
+    stat = Stats.query.filter_by(key='spin_count').first()
+    if stat:
+        stat.value += 1
+    else:
+        stat = Stats(key='spin_count', value=1)
+        db.session.add(stat)
     db.session.commit()
     return jsonify(chosen.to_dict()), 200
 
@@ -141,22 +156,17 @@ def update_restaurant(restaurant_id):
 def get_stats():
     total_restaurants = Restaurant.query.count()
     total_spins = db.session.query(db.func.sum(Restaurant.spin_count)).scalar() or 0
-    total_views = db.session.query(db.func.sum(Restaurant.view_count)).scalar() or 0
+    page_views = 0
+    stat = Stats.query.filter_by(key='page_views').first()
+    if stat:
+        page_views = stat.value
     return jsonify({
         'restaurants': total_restaurants,
         'spins': total_spins,
-        'views': total_views
+        'page_views': page_views
     })
 
 
-@main_bp.route('/api/restaurants/<int:restaurant_id>/view', methods=['POST'])
-def view_restaurant(restaurant_id):
-    restaurant = Restaurant.query.get(restaurant_id)
-    if not restaurant:
-        return jsonify({'error': 'Restaurant not found'}), 404
-    restaurant.view_count = (restaurant.view_count or 0) + 1
-    db.session.commit()
-    return jsonify({'success': True}), 200
 
 @main_bp.route('/api/export', methods=['GET'])
 def export_data():
