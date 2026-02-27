@@ -491,7 +491,7 @@ input[type="text"]:focus {
     white-space: nowrap;
     font-size: 0.9rem;
     text-align: center;
-    color: var(--text-primary);
+    color: var(--text-secondary);
 }
 
 .roulette-section {

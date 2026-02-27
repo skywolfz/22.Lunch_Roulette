@@ -248,8 +248,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // Category edit with dropdown
             const select = document.createElement('select');
             select.className = 'category-dropdown-edit';
-            // constrain width to current label
-            select.style.width = span.offsetWidth + 'px';
+            // constrain width to current label, but don't exceed max
+            const maxWidth = 150; // pixels
+            const computed = Math.min(span.offsetWidth, maxWidth);
+            select.style.width = computed + 'px';
             
             // Get the actual category text from the label element
             const categoryLabel = span.querySelector('.category-label')?.textContent || span.textContent;
@@ -305,7 +307,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Note edit (original inline edit)
             const input = document.createElement('input');
             input.value = span.textContent;
-            input.style.width = span.offsetWidth + 'px';
+            // limit width so it doesn't overflow page
+            const maxW = 150;
+            input.style.width = Math.min(span.offsetWidth, maxW) + 'px';
             span.replaceWith(input);
             input.focus();
             input.addEventListener('blur', async () => {

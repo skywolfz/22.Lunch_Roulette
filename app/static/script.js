@@ -69,6 +69,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         updateSelectAllState();
+        // refresh stats after categories load
+        updateFilteredRestaurantsList();
     }
     
     function updateSelectAllState() {
@@ -188,18 +190,20 @@ document.addEventListener('DOMContentLoaded', function() {
         currentWinner = winner;
         currentWinnerResult = fullResult;
         
-        // Start roulette wheel spin
+        // Start roulette wheel spin and sync text animation
+        let spinFinished = false;
+        const spinDuration = 5000;
         if (roulette && roulette.restaurants.length > 0) {
-            roulette.spin(5000, fullResult.id, () => {
-                // Spin complete
+            roulette.spin(spinDuration, fullResult.id, () => {
+                spinFinished = true;
+                displayWinner(winner, fullResult);
+                // update stats after spin
+                loadStats();
             });
         }
         
         const step = () => {
-            if (delay > 500) {
-                displayWinner(winner, fullResult);
-                // update stats after spin
-                loadStats();
+            if (spinFinished) {
                 animationTimer = null;
                 return;
             }
