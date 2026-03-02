@@ -129,16 +129,15 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Display horizontal category stats (spins/view counts)
+        // Display horizontal category stats (spins only)
         const catsToShow = allCategories.filter(c => selectedCategoryIds.includes(c.id));
         catsToShow.forEach(cat => {
             const restaurantsInCat = latestRestaurants.filter(r => r.category_id === cat.id);
             const totalSpins = restaurantsInCat.reduce((sum, r) => sum + (r.spin_count || 0), 0);
-            const totalViews = restaurantsInCat.reduce((sum, r) => sum + (r.view_count || 0), 0);
 
             const li = document.createElement('li');
             li.className = 'category-stats-item';
-            li.innerHTML = `<strong>${cat.name}</strong><br><small>spins: ${totalSpins} views: ${totalViews}</small>`;
+            li.innerHTML = `<strong>${cat.name}</strong><br><small>spins: ${totalSpins}</small>`;
             restaurantsList.appendChild(li);
         });
     }
