@@ -140,4 +140,15 @@ class RouletteWheel {
         
         if (callback) callback();
     }
+
+    // Immediately set rotation to a specific restaurant by id (no animation)
+    gotoRestaurant(restaurantId) {
+        if (!this.restaurants.length) return;
+        const idx = this.restaurants.findIndex(r => r.id === restaurantId);
+        if (idx === -1) return;
+        const sliceAngle = (2 * Math.PI) / this.restaurants.length;
+        const targetAngle = -Math.PI / 2 - (idx + 0.5) * sliceAngle;
+        this.rotation = targetAngle;
+        this.draw();
+    }
 }

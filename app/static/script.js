@@ -230,9 +230,12 @@ document.addEventListener('DOMContentLoaded', function() {
             animationTimer = null;
         }
         
-        // Stop roulette wheel
+        // Stop roulette wheel and align to the chosen restaurant
         if (roulette) {
             roulette.stop();
+            if (currentWinnerResult) {
+                roulette.gotoRestaurant(currentWinnerResult.id);
+            }
         }
         
         // show the current winner instead of just 'Stopped'
