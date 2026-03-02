@@ -496,7 +496,7 @@ input[type="text"]:focus {
     opacity: 0.7;
 }
 
-.category-stats-item {
+body.index-page .category-stats-item {
     /* render as inline text, allow wrapping via parent flex container */
     display: inline;
     padding: 0;
@@ -505,7 +505,9 @@ input[type="text"]:focus {
     border: none;
     white-space: normal;
     font-size: 0.9rem;
-    color: var(--text-primary);
+    color: var(--text-secondary);
+    font-weight: 600;
+}
 }
 
 .roulette-section {
