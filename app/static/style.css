@@ -281,7 +281,8 @@ body {
     font-size: 0.85rem;
     cursor: pointer;
     background-color: var(--bg-secondary);
-    color: var(--text-primary);
+    /* use secondary text color for stronger contrast across themes */
+    color: var(--text-secondary);
     transition: all 0.2s ease;
     width: auto;
     min-width: 0;
@@ -292,6 +293,12 @@ body {
 .category-dropdown-edit:hover {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2);
+}
+
+/* ensure option text in native dropdowns also uses theme-aware, darker color */
+.category-dropdown-edit option {
+    color: var(--text-secondary);
+    background-color: var(--bg-primary);
 }
 
 input[type="text"] {
